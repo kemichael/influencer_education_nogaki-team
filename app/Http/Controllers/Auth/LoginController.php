@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -25,7 +26,27 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/top';
+    public function showLoginForm() {
+        return view('/auth/login');
+    }
+
+    /**
+     * ログアウト後の遷移先を変更
+     */
+    public function logout(Request $request)
+    {
+        // Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // 遷移先を好きなURL/ルートに変更
+        return redirect('/login');          // 例: 固定URL
+        // return redirect()->route('goodbye');     // 例: ルート名
+        // return redirect('/');                    // 例: トップへ
+    }
+
 
     /**
      * Create a new controller instance.
