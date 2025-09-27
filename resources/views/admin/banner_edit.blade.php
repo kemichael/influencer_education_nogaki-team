@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return res.json();
                 })
                 .then(data => {
+                
                     if(data.success){
                         row.remove();
                         showAlert('削除成功', 'success');
@@ -94,49 +95,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 登録ボタン（Ajax） ---
     submitBtn.addEventListener('click', () => {
-        const formData = new FormData();
-         let hasFile = false; 
-        document.querySelectorAll('.file-input').forEach(input => {
-            if(input.files[0]) formData.append('banners[]', input.files[0]);
-            hasFile = true; // ←ファイルが1つでも選ばれていたらtrueにする
-        
-        });
+    const formData = new FormData();
+    let hasFile = false;
 
-        if(!hasFile){
-        showAlert('ファイルが選択されていません', 'error'); // 赤いアラート表示
-        return; // 送信を止める
-    }
-        fetch('http://localhost:8888/influencer_education_nogaki-team/public/admin/banner/register', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: formData
-        })
-        .then(res => {
-            if(!res.ok) throw new Error('HTTPエラー: ' + res.status);
-            const contentType = res.headers.get('content-type');
-            if(!contentType || !contentType.includes('application/json')) {
-                throw new Error('JSONを期待したがHTMLが返ってきました');
-            }
-            return res.json();
-        })
-        .then(data => {
-            if(data.success){
-                showAlert('登録成功', 'success');
-
-                // 新規行を既存行として更新
-                document.querySelectorAll('tr').forEach(row => {
-                    if(!row.dataset.id) row.remove();
-                });
-
-                data.banners.forEach(b => bannerRows.appendChild(createBannerRow(b.id, b.image)));
-            } else {
-                 showAlert(data.message || '登録失敗', 'error');
-            }
-        })
-        .catch(err => showAlert(err.message, 'error'));
+    document.querySelectorAll('.file-input').forEach(input => {
+        if(input.files[0]) {
+            formData.append('banners[]', input.files[0]);
+            hasFile = true;
+        }
     });
+
+    if(!hasFile){
+        showAlert('ファイルが選択されていません', 'error');
+        return;
+    }
+
+    fetch('{{ url("admin/banner/register") }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            showAlert('登録成功', 'success');
+            // 行リセット＆再描画
+            bannerRows.innerHTML = '';
+            data.banners.forEach(b => bannerRows.appendChild(createBannerRow(b.id, b.image)));
+        } else {
+            if(data.errors){
+                showAlert(data.errors.join("\n"), 'error');
+            } else {
+                showAlert(data.message || '登録失敗', 'error');
+            }
+        }
+    })
+    .catch(err => showAlert(err.message, 'error'));
+});
 
     // --- 行作成関数 ---
     // --- 行作成関数 ---
