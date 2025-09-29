@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\Banner;
+use App\Http\Requests\BannerRequest;
 
 class BannerController extends Controller
 {
@@ -23,71 +24,34 @@ class BannerController extends Controller
     }
 
     // バナー登録
-    public function register(Request $request)
-    {
-        try {
-            // バリデーション
-            $request->validate([
-                'banners'   => 'required|array',
-                'banners.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            ], [
-                'banners.required' => 'ファイルを選択してください。',
-                'banners.*.image'  => '画像ファイルを選択してください。',
-                'banners.*.mimes'  => '対応形式は jpeg, png, jpg, gif です。',
-                'banners.*.max'    => '画像サイズは2MB以下にしてください。',
-            ]);
+    public function register(BannerRequest $request)
+{
+    try {
+        $savedBanners = [];
 
-            $savedBanners = [];
-            $storedFiles = []; // 失敗時に削除するファイルを記録
+        foreach ($request->file('banners') as $file) {
+            if (!$file->isValid()) continue;
 
-            DB::beginTransaction(); // 🔹 トランザクション開始
+            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $file->storeAs('public/images/banner', $fileName);
 
-            foreach ($request->file('banners') as $file) {
-                if (!$file->isValid()) continue;
-
-                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-                // ファイル保存
-                $file->storeAs('public/images/banner', $fileName);
-                $storedFiles[] = $fileName;
-
-                // DB登録
-                $banner = Banner::create(['image' => $fileName]);
-                $savedBanners[] = $banner;
-            }
-
-            DB::commit(); // 🔹 成功 → コミット
-
-            return response()->json([
-                'success' => true,
-                'banners' => $savedBanners
-            ]);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            DB::rollBack(); // 🔹 バリデーション失敗でもロールバック
-            return response()->json([
-                'success' => false,
-                'errors'  => collect($e->errors())->flatten(),
-            ], 422);
-
-        } catch (\Exception $e) {
-            DB::rollBack(); // 🔹 DBをロールバック
-
-            // 保存済みファイルがあれば削除
-            foreach ($storedFiles ?? [] as $fileName) {
-                if (Storage::exists('public/images/banner/' . $fileName)) {
-                    Storage::delete('public/images/banner/' . $fileName);
-                }
-            }
-
-            \Log::error('Banner登録エラー: ' . $e->getMessage());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'サーバーエラーが発生しました'
-            ], 500);
+            $banner = Banner::create(['image' => $fileName]);
+            $savedBanners[] = $banner;
         }
+
+        return response()->json([
+            'success' => true,
+            'banners' => $savedBanners
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Banner登録エラー: '.$e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'サーバーエラーが発生しました'
+        ], 500);
     }
+}
 
     // バナー削除
 public function destroy($id)
