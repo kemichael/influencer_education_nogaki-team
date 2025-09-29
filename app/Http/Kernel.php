@@ -43,6 +43,10 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+        //'web' => [
+        // 既存ミドルウェア
+        //\App\Http\Middleware\PreventBackHistory::class,
+    //],
     ];
 
     /**
@@ -63,5 +67,10 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        /* // 既存のミドルウェア
+        'prevent-back-history' => \App\Http\Middleware\PreventBackHistory::class, */
     ];
+
+
+
 }
