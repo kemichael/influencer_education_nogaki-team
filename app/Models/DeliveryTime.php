@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\DB;
 class DeliveryTime extends Model
 {
     use HasFactory;
-    public function getDeliveryTime($curriculumId) {
+    public function getDeliveryTime($Id) {
         // articlesテーブルからデータを取得
-        $deliveryTime = DB::table('delivery_times')->where('curriculums_id', $curriculumId)->first();
+        $deliveryTime = DB::table('delivery_times')->where('id', $Id)->first();
         return $deliveryTime;
     }
 }

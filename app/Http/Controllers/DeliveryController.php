@@ -17,8 +17,8 @@ class DeliveryController extends Controller
         $modelCurri = new Curriculum();
         $curriculum = $modelCurri->getCurriculum($request->curriculum_id); // ここで1件だけ返す
         $modelDeliveryTime = new DeliveryTime();
-        $deliveryTime = $modelDeliveryTime->getDeliveryTime($request->curriculum_id); // ここで1件だけ返す
-        // 例: $curriculum->grade_id で学年IDを取得
+        $deliveryTime = $modelDeliveryTime->getDeliveryTime($request->id); // ここで1件だけ返す
+        
         $modelGrade = new Grade();
         $grade = $modelGrade->getGrade($curriculum->grade_id); // 学年情報を取得
         return view('delivery', [
