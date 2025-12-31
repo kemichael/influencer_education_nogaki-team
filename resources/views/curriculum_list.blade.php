@@ -6,7 +6,8 @@
         授業一覧ページ
     </p>
     <p>
-        <a href="../delivery?curriculum_id=1&id=3">小学1年生　id:3</a> 
-    </p>
+        <a href="../delivery?curriculum_id=1">小学1年生　</a> 
+        <a href="../delivery?curriculum_id=2">小学2年生　</a> 
+        </p>
 </div>
 @endsection
