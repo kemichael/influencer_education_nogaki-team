@@ -10,6 +10,16 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    public function schoolClass()
+    {
+        return $this->belongsTo(schoolClass::class, 'grade_id');
+    }
+
+    public function curriculumProgress()
+    {
+        return $this->hasMany(CurriculumProgress::class, 'user_id');
+    }
+
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
