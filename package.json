@@ -2,7 +2,9 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "dev:rosetta": "arch -x86_64 vite",
+        "build:rosetta": "arch -x86_64 vite build"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",

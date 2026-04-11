@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('articles')) {
+            return;
+        }
+
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->date('posted_date');
@@ -19,6 +23,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! Schema::hasTable('articles')) {
+            return;
+        }
+
         Schema::dropIfExists('articles');
     }
 };

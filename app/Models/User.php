@@ -10,17 +10,17 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    use HasApiTokens, HasFactory, Notifiable;
+
     public function schoolClass()
     {
-        return $this->belongsTo(schoolClass::class, 'grade_id');
+        return $this->belongsTo(SchoolClass::class, 'grade_id');
     }
 
     public function curriculumProgress()
     {
         return $this->hasMany(CurriculumProgress::class, 'user_id');
     }
-
-    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -29,8 +29,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'name_kana',
         'email',
         'password',
+        'profile_image',
+        'grade_id',
     ];
 
     /**

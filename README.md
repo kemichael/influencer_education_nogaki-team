@@ -1,3 +1,22 @@
+## Local Setup Notes
+
+### Start the app
+
+1. `php artisan serve`
+2. If Vite assets are missing, run `npm run build`
+
+### Apple Silicon + Rosetta note
+
+This repository currently has `esbuild` installed as `darwin-x64`.
+If `npm run dev` or `npm run build` fails with an esbuild platform mismatch on Apple Silicon Macs, use:
+
+- `npm run dev:rosetta`
+- `npm run build:rosetta`
+
+`public/build/manifest.json` has already been generated once locally, so pages can load without starting Vite unless front-end assets change.
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
